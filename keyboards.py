@@ -18,3 +18,10 @@ catalog = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Цепочки', callback_data='chain'),
      InlineKeyboardButton(text='Браслеты', callback_data='bracelets')]
 ])
+
+
+async def buy_item(item):
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text='Купить', callback_data=f'buy_{item}')],
+        [InlineKeyboardButton(text='Назад', callback_data='back_to_menu')]
+    ])
