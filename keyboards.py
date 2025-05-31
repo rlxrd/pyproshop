@@ -2,6 +2,8 @@
 # Inline - крепится к сообщению
 from aiogram.types import (ReplyKeyboardMarkup, KeyboardButton,
                            InlineKeyboardMarkup, InlineKeyboardButton)
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+from database.requests import get_categories, get_product_by_category
 
 menu = ReplyKeyboardMarkup(keyboard=[
     [KeyboardButton(text='Каталог')],
@@ -12,12 +14,20 @@ resize_keyboard=True,
 input_field_placeholder='Выберите пункт меню...')
 
 
-catalog = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text='Кроссовки', callback_data='sneakers')],
-    [InlineKeyboardButton(text='Футболки', callback_data='t-shirt')],
-    [InlineKeyboardButton(text='Цепочки', callback_data='chain'),
-     InlineKeyboardButton(text='Браслеты', callback_data='bracelets')]
-])
+async def catalog():
+    keyboard = InlineKeyboardBuilder()
+    categories = await get_categories()
+    for category in categories:
+        keyboard.row(InlineKeyboardButton(text=category.name, callback_data=f'category_{category.id}'))
+    return keyboard.as_markup()
+
+
+async def products(category_id):
+    keyboard = InlineKeyboardBuilder()
+    all_products = await get_product_by_category(category_id)
+    for product in all_products:
+        keyboard.row(InlineKeyboardButton(text=product.name, callback_data=f'product_{product.id}'))
+    return keyboard.as_markup()
 
 
 async def buy_item(item):

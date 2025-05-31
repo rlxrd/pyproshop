@@ -23,10 +23,12 @@ SQLAlchemy, ORM
 
 from sqlalchemy import BigInteger, String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
-from sqlalchemy.ext.asyncio import AsyncAttrs, async_session, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 
 
 engine = create_async_engine("sqlite+aiosqlite:///shop.db", echo=True)
+
+async_session = async_sessionmaker(engine)
 
 
 class Base(AsyncAttrs, DeclarativeBase):

@@ -27,12 +27,19 @@ async def cmd_start(message: Message, state: FSMContext):
 async def catalog(event: Message | CallbackQuery):
     if isinstance(event, Message):
         await event.answer('Выберите тип товара',
-                            reply_markup=kb.catalog)
+                            reply_markup=await kb.catalog())
     else:
         await event.message.delete()
         await event.message.answer('Выберите тип товара',
-                            reply_markup=kb.catalog)
+                            reply_markup=await kb.catalog())
         await event.answer()
+
+
+@router.callback_query(F.data.startswith('category_'))
+async def products(callback: CallbackQuery):
+    await callback.answer()
+    await callback.message.answer('Товары по выбранной категории',
+                                  reply_markup=await kb.products(callback.data.split('_')[1]))
 
 
 @router.callback_query(F.data == 'sneakers')
