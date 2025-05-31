@@ -62,12 +62,16 @@ async def buy_item(callback: CallbackQuery, state: FSMContext):
 async def order_name(message: Message, state: FSMContext):
     await state.update_data(name=message.text)
     await state.set_state(Order.phone)
-    await message.answer('Введите ваш номер телефона')
+    await message.answer('Введите ваш номер телефона', reply_markup=kb.get_contact)
 
 
+@router.message(F.contact)
 @router.message(Order.phone)
 async def order_phone(message: Message, state: FSMContext):
-    await state.update_data(phone=message.text)
+    if message.contact.phone_number:
+        await state.update_data(phone=message.contact.phone_number)
+    else:
+        await state.update_data(phone=message.text)
     await state.set_state(Order.address)
     await message.answer('Введите ваш адрес')
 

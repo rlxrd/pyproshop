@@ -25,3 +25,8 @@ async def buy_item(item):
         [InlineKeyboardButton(text='Купить', callback_data=f'buy_{item}')],
         [InlineKeyboardButton(text='Назад', callback_data='back_to_menu')]
     ])
+
+
+get_contact = ReplyKeyboardMarkup(keyboard=[
+    [KeyboardButton(text='Отправить контакт', request_contact=True)]
+])
