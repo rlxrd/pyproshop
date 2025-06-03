@@ -5,6 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
 import keyboards as kb
+from database.requests import get_item_by_id
 
 router = Router()
 
@@ -42,19 +43,12 @@ async def products(callback: CallbackQuery):
                                   reply_markup=await kb.products(callback.data.split('_')[1]))
 
 
-@router.callback_query(F.data == 'sneakers')
-async def sneakers(callback: CallbackQuery):
-    await callback.answer('Вы выбрали кроссовки')
-    await callback.message.answer('Кроссовки Cortez\n\nЦена: 150$',
-                                  reply_markup=await kb.buy_item(callback.data))
-
-
-@router.callback_query(F.data == 't-shirt')
-async def t_shirt(callback: CallbackQuery):
-    await callback.answer('Вы выбрали футболку')
-    await callback.message.answer('Футболка Cortez\n\nЦена 100$',
-                                  reply_markup=await kb.buy_item(callback.data))
-
+@router.callback_query(F.data.startswith('product_'))
+async def products(callback: CallbackQuery):
+    item = await get_item_by_id(callback.data.split('_')[1])
+    await callback.answer()
+    await callback.message.answer(f'{item.name}\n\n{item.description}\n\nЦена: {item.price}',
+                                  reply_markup=await kb.buy_item(item.id))
 
 
 @router.callback_query(F.data.startswith('buy_'))
@@ -75,9 +69,9 @@ async def order_name(message: Message, state: FSMContext):
 @router.message(F.contact)
 @router.message(Order.phone)
 async def order_phone(message: Message, state: FSMContext):
-    if message.contact.phone_number:
+    try:
         await state.update_data(phone=message.contact.phone_number)
-    else:
+    except AttributeError:
         await state.update_data(phone=message.text)
     await state.set_state(Order.address)
     await message.answer('Введите ваш адрес')

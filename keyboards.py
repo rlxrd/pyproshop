@@ -11,7 +11,8 @@ menu = ReplyKeyboardMarkup(keyboard=[
      KeyboardButton(text='Контакты')]
 ],
 resize_keyboard=True,
-input_field_placeholder='Выберите пункт меню...')
+input_field_placeholder='Выберите пункт меню...',
+one_time_keyboard=True)
 
 
 async def catalog():
