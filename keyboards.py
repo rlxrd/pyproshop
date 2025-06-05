@@ -28,13 +28,14 @@ async def products(category_id):
     all_products = await get_product_by_category(category_id)
     for product in all_products:
         keyboard.row(InlineKeyboardButton(text=product.name, callback_data=f'product_{product.id}'))
+    keyboard.row(InlineKeyboardButton(text='Назад', callback_data=f'back_to_menu'))
     return keyboard.as_markup()
 
 
-async def buy_item(item):
+async def buy_item(item, item_category):
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text='Купить', callback_data=f'buy_{item}')],
-        [InlineKeyboardButton(text='Назад', callback_data='back_to_menu')]
+        [InlineKeyboardButton(text='Назад', callback_data=f'category_{item_category}')]
     ])
 
 

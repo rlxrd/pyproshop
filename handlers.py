@@ -39,7 +39,7 @@ async def catalog(event: Message | CallbackQuery):
 @router.callback_query(F.data.startswith('category_'))
 async def products(callback: CallbackQuery):
     await callback.answer()
-    await callback.message.answer('Товары по выбранной категории',
+    await callback.message.edit_text('Товары по выбранной категории',
                                   reply_markup=await kb.products(callback.data.split('_')[1]))
 
 
@@ -47,8 +47,9 @@ async def products(callback: CallbackQuery):
 async def products(callback: CallbackQuery):
     item = await get_item_by_id(callback.data.split('_')[1])
     await callback.answer()
+    await callback.message.delete()
     await callback.message.answer(f'{item.name}\n\n{item.description}\n\nЦена: {item.price}',
-                                  reply_markup=await kb.buy_item(item.id))
+                                        reply_markup=await kb.buy_item(item.id, item.category))
 
 
 @router.callback_query(F.data.startswith('buy_'))
